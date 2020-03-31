@@ -6,21 +6,21 @@
         xmlns:local="clr-namespace:ContactsApp"
         mc:Ignorable="d"
         WindowState="Normal"
-        Title="People" Height="420" Width="640" ResizeMode="NoResize">
+        Title="People" Height="540" Width="720" ResizeMode="NoResize">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="310*"/>
-            <ColumnDefinition Width="310*"/>
+            <ColumnDefinition Width="350*"/>
+            <ColumnDefinition Width="350*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="25"></RowDefinition>
-            <RowDefinition Height="375"></RowDefinition>
+            <RowDefinition Height="485"></RowDefinition>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Column="0" Grid.Row="0">
+        <DockPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
             <TextBox HorizontalAlignment="Left" Text="Search" VerticalAlignment="Top" Width="200" Height="25" VerticalContentAlignment="Center"/>
-            <Button HorizontalAlignment="Right" Width="30" Height="25" VerticalAlignment="Top">Add</Button>
+            <Button HorizontalAlignment="Right" Width="30" Height="25" VerticalAlignment="Top" Click="Button_Click" ClickMode="Press">Add</Button>
         </DockPanel>
-        <ScrollViewer Grid.Column="0" Grid.Row="0" VerticalScrollBarVisibility="Hidden"/>
-        <UserControl Grid.Column="1" Grid.RowSpan="2"></UserControl>
+        <ScrollViewer Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Hidden" Margin="0,0,10,0"/>
+        <UserControl Name="ContactDisplay" Grid.Column="1" Grid.RowSpan="2"></UserControl>
     </Grid>
 </Window>
