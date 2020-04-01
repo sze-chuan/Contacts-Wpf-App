@@ -12,6 +12,13 @@
     </Window.DataContext>
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="Converter" />
+        <Style x:Key="ColumnHeaderStyle" TargetType="GridViewColumnHeader">
+            <Setter Property="FontWeight" Value="Bold"></Setter>
+            <Setter Property="HorizontalContentAlignment" Value="Left" ></Setter>
+            <Setter Property="Width" Value="170" ></Setter>
+            <Setter Property="BorderThickness" Value="0"></Setter>
+            <Setter Property="Background" Value="White"></Setter>
+        </Style>
     </Window.Resources>
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
@@ -28,7 +35,14 @@
                     VerticalAlignment="Top" 
                     Command="{Binding AddNewContactCommand}">Add</Button>
         </DockPanel>
-        <ScrollViewer Grid.Column="0" Grid.Row="1" VerticalScrollBarVisibility="Hidden" Margin="0,0,10,0"/>
+        <ListView Grid.Column="0" Grid.Row="1" ItemsSource="{Binding Contacts}" BorderThickness="0" Margin="0,10,10,0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" HeaderContainerStyle="{StaticResource ColumnHeaderStyle}" DisplayMemberBinding="{Binding FullName }"></GridViewColumn>
+                    <GridViewColumn Header="Email" HeaderContainerStyle="{StaticResource ColumnHeaderStyle}" DisplayMemberBinding="{Binding Email }"></GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
         <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding ShowContactInfo, Converter={StaticResource Converter}}" >
             <Label FontWeight="ExtraBold" FontSize="14" VerticalContentAlignment="Top" Padding="5,0,5,5">New Contact</Label>
             <Label>Last Name</Label>
@@ -48,7 +62,7 @@
             <TextBox Margin="5" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.Country}"></TextBox>
             <Separator Margin="5,10" />
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
-                <Button Width="150" Margin="10,0" Height="30">Save</Button>
+                <Button Width="150" Margin="10,0" Height="30" Command="{Binding SaveContactCommand}" >Save</Button>
                 <Button Width="150" Margin="10,0" Height="30">Cancel</Button>
             </StackPanel>
         </StackPanel>
