@@ -11,14 +11,12 @@
         <local:ContactMainViewModel/>
     </Window.DataContext>
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="Converter" />
-        <Style x:Key="ColumnHeaderStyle" TargetType="GridViewColumnHeader">
-            <Setter Property="FontWeight" Value="Bold"></Setter>
-            <Setter Property="HorizontalContentAlignment" Value="Left" ></Setter>
-            <Setter Property="Width" Value="170" ></Setter>
-            <Setter Property="BorderThickness" Value="0"></Setter>
-            <Setter Property="Background" Value="White"></Setter>
-        </Style>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="Converter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Resources/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
@@ -30,9 +28,22 @@
             <RowDefinition Height="485"></RowDefinition>
         </Grid.RowDefinitions>
         <DockPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
-            <TextBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="25" 
-                     VerticalContentAlignment="Center"
-                     Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+            <Grid>
+                <TextBox Name="SearchText" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="25" 
+                         VerticalContentAlignment="Center"
+                         Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBlock Text="Search">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource PlaceHolderTextStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=SearchText}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
             <Button HorizontalAlignment="Right" Width="30" Height="25" 
                     VerticalAlignment="Top" 
                     Command="{Binding AddNewContactCommand}">Add</Button>
@@ -54,26 +65,78 @@
         </ListView>
         <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Visibility="{Binding ShowContactInfo, Converter={StaticResource Converter}}" >
             <DockPanel>
-                <Label HorizontalAlignment="Left" FontWeight="ExtraBold" FontSize="14" VerticalContentAlignment="Top" Padding="5,0,5,5">Add New Contact</Label>
+                <Label HorizontalAlignment="Left" FontWeight="ExtraBold" FontSize="14" VerticalContentAlignment="Top" Padding="5,0,5,5" Content="{Binding ContactHeaderText}"></Label>
                 <Button HorizontalAlignment="Right" Width="40" Height="25" 
                         Command="{Binding DeleteCommand}"
                         Visibility="{Binding ShowDeleteButton, Converter={StaticResource Converter}}">Delete</Button>
             </DockPanel>
             <Label>Last Name</Label>
-            <TextBox Margin="5,0,5,0" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.LastName}"></TextBox>
+            <TextBox Style="{StaticResource ContactInfoTextBoxStyle}" Text="{Binding Path=SelectedContact.LastName}"></TextBox>
             <Label>First Name</Label>
-            <TextBox Margin="5,0,5,0" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.FirstName}"></TextBox>
+            <TextBox Style="{StaticResource ContactInfoTextBoxStyle}" Text="{Binding Path=SelectedContact.FirstName}"></TextBox>
             <Separator Margin="5,10,5,0" />
             <Label>Mobile</Label>
-            <TextBox Margin="5,0,5,0" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.Mobile}"></TextBox>
+            <TextBox Style="{StaticResource ContactInfoTextBoxStyle}" Text="{Binding Path=SelectedContact.Mobile}"></TextBox>
             <Label>Email</Label>
-            <TextBox Margin="5,0,5,0" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.Email}"></TextBox>
+            <TextBox Style="{StaticResource ContactInfoTextBoxStyle}" Text="{Binding Path=SelectedContact.Email}"></TextBox>
             <Separator Margin="5,10,5,0" />
             <Label>Address</Label>
-            <TextBox Margin="5" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.AddressLine1}"></TextBox>
-            <TextBox Margin="5" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.AddressLine2}"></TextBox>
-            <TextBox Margin="5" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.PostalCode}"></TextBox>
-            <TextBox Margin="5" Height="25" VerticalContentAlignment="Center" Text="{Binding Path=SelectedContact.Country}"></TextBox>
+            <Grid>
+                <TextBox Name="AddressLine1" Style="{StaticResource AddressTextBoxStyle}" Text="{Binding Path=SelectedContact.AddressLine1}"></TextBox>
+                <TextBlock Text="Address Line 1">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource PlaceHolderTextStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=AddressLine1}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+            <Grid>
+                <TextBox Name="AddressLine2" Style="{StaticResource AddressTextBoxStyle}" Text="{Binding Path=SelectedContact.AddressLine2}"></TextBox>
+                <TextBlock Text="Address Line 2">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource PlaceHolderTextStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=AddressLine2}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+            <Grid>
+                <TextBox Name="PostalCode" Style="{StaticResource AddressTextBoxStyle}" Text="{Binding Path=SelectedContact.PostalCode}"></TextBox>
+                <TextBlock Text="PostalCode">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource PlaceHolderTextStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=PostalCode}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+            <Grid>
+                <TextBox Name="Country" Style="{StaticResource AddressTextBoxStyle}" Text="{Binding Path=SelectedContact.Country}"></TextBox>
+                <TextBlock Text="Country">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource PlaceHolderTextStyle}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Text, ElementName=Country}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
             <Separator Margin="5,10" />
             <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
                 <Button Width="150" Margin="10,0" Height="30" Command="{Binding SaveContactCommand}" >Save</Button>

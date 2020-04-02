@@ -29,6 +29,12 @@ namespace ContactsApp.ViewModels
 
         private string _searchText;
 
+        private DelegateCommand _addNewContactCommand;
+        private DelegateCommand _saveContactCommand;
+        private DelegateCommand _editContactCommand;
+        private DelegateCommand _cancelCommand;
+        private DelegateCommand _deleteContactCommand;
+
         public Contact SelectedContact
         {
             get => _selectedContact;
@@ -44,7 +50,7 @@ namespace ContactsApp.ViewModels
         public ContactInfoMode Mode
         {
             get => _mode;
-            set { _mode = value; OnPropertyChanged(nameof(Mode)); OnPropertyChanged(nameof(ShowContactInfo)); OnPropertyChanged(nameof(ShowDeleteButton)); }
+            set { _mode = value; OnPropertyChanged(nameof(Mode)); OnPropertyChanged(nameof(ShowContactInfo)); OnPropertyChanged(nameof(ShowDeleteButton)); OnPropertyChanged(nameof(ContactHeaderText)); }
         }
 
         public string SearchText
@@ -59,42 +65,44 @@ namespace ContactsApp.ViewModels
             }
         }
 
-        public ICommand AddNewContactCommand => new DelegateCommand(AddNewContact, CanAddNewContact);
+        public ICommand AddNewContactCommand => _addNewContactCommand ??= new DelegateCommand(AddNewContact, CanAddNewContact);
 
-        public ICommand SaveContactCommand => new DelegateCommand(SaveContact, CanSaveContact);
+        public ICommand SaveContactCommand => _saveContactCommand ??= new DelegateCommand(SaveContact, CanSaveContact);
 
-        public ICommand EditContactCommand => new DelegateCommand(EditContact, CanEditContact);
+        public ICommand EditContactCommand => _editContactCommand ??= new DelegateCommand(EditContact, CanEditContact);
 
-        public ICommand CancelCommand => new DelegateCommand(CancelContact, CanCancelContact);
+        public ICommand CancelCommand => _cancelCommand ??= new DelegateCommand(CancelContact, CanCancelContact);
 
-        public ICommand DeleteCommand => new DelegateCommand(DeleteContact, CanDeleteContact);
+        public ICommand DeleteCommand => _deleteContactCommand ??= new DelegateCommand(DeleteContact, CanDeleteContact);
 
         public bool ShowContactInfo => Mode == ContactInfoMode.Add || Mode == ContactInfoMode.Edit;
 
         public bool ShowDeleteButton => Mode == ContactInfoMode.Edit;
+
+        public string ContactHeaderText => Mode == ContactInfoMode.Add ? "Add New Contact" : "Edit Contact";
 
         #region Command related
         private void AddNewContact(object commandParameter)
         {
             Mode = ContactInfoMode.Add;
             SelectedContact = new Contact();
+            _addNewContactCommand.InvokeCanExecuteChanged();
         }
 
         private bool CanAddNewContact(object commandParameter)
         {
-            return true;
+            return Mode == ContactInfoMode.None;
         }
 
         private void SaveContact(object commandParameter)
         {
-            var contactIndex = Contacts.IndexOf(SelectedContact);
-
-            if (contactIndex < 0)
+            if (Mode == ContactInfoMode.Add)
             {
                 Contacts.Add(SelectedContact);
             }
             else
             {
+                var contactIndex = Contacts.IndexOf(SelectedContact);
                 Contacts[contactIndex].FirstName = SelectedContact.FirstName;
             }
 
@@ -108,7 +116,7 @@ namespace ContactsApp.ViewModels
 
         private void CancelContact(object commandParameter)
         {
-            Mode = ContactInfoMode.None;
+            SetContactInfoModeToNone();
         }
         private bool CanCancelContact(object commandParameter)
         {
@@ -118,9 +126,11 @@ namespace ContactsApp.ViewModels
         private void EditContact(object commandParameter)
         {
             if (commandParameter != null)
-            {
+            { 
                 Mode = ContactInfoMode.Edit;
                 SelectedContact = (Contact)commandParameter;
+                _addNewContactCommand.InvokeCanExecuteChanged();
+                _deleteContactCommand.InvokeCanExecuteChanged();
             }
         }
 
@@ -134,19 +144,25 @@ namespace ContactsApp.ViewModels
             if (SelectedContact != null)
             {
                 Contacts.Remove(SelectedContact);
-                Mode = ContactInfoMode.None;
+                SetContactInfoModeToNone();
             }
         }
         private bool CanDeleteContact(object commandParameter)
         {
-            return true;
+            return Mode == ContactInfoMode.Edit;
         }
         #endregion
+
+        private void SetContactInfoModeToNone()
+        {
+            Mode = ContactInfoMode.None;
+            _addNewContactCommand.InvokeCanExecuteChanged();
+        }
 
         // TODO: For testing purpose. To remove later.
         private void GenerateData()
         {
-            for (var i = 0; i < 8; i++)
+            for (var i = 0; i < 100; i++)
             {
                 var contact = new Contact
                 {

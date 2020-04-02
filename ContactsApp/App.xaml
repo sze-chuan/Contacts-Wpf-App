@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:ContactsApp"
              StartupUri="Views/ContactMain.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>
