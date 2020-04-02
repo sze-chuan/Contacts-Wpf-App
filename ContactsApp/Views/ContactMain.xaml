@@ -30,7 +30,9 @@
             <RowDefinition Height="485"></RowDefinition>
         </Grid.RowDefinitions>
         <DockPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
-            <TextBox HorizontalAlignment="Left" Text="Search" VerticalAlignment="Top" Width="200" Height="25" VerticalContentAlignment="Center"/>
+            <TextBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="25" 
+                     VerticalContentAlignment="Center"
+                     Text="{Binding Path=SearchText, UpdateSourceTrigger=PropertyChanged}"/>
             <Button HorizontalAlignment="Right" Width="30" Height="25" 
                     VerticalAlignment="Top" 
                     Command="{Binding AddNewContactCommand}">Add</Button>

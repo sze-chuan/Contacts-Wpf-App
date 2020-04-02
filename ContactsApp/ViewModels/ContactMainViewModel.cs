@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 using ContactsApp.Commands;
 using ContactsApp.Models;
 using System.Windows.Input;
@@ -11,21 +13,21 @@ namespace ContactsApp.ViewModels
         public ContactMainViewModel()
         {
             Contacts = new ObservableCollection<Contact>();
+            ContactsView = CollectionViewSource.GetDefaultView(Contacts);
+            ContactsView.Filter = contact => string.IsNullOrEmpty(SearchText) || ((Contact)contact).FullName.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase);
             Mode = ContactInfoMode.None;
             GenerateData();
         }
-
-        private ContactInfoMode _mode;
 
         private Contact _selectedContact;
 
         private ObservableCollection<Contact> _contacts;
 
-        public ContactInfoMode Mode
-        {
-            get => _mode;
-            set { _mode = value; OnPropertyChanged(nameof(ShowContactInfo)); OnPropertyChanged(nameof(ShowDeleteButton)); }
-        }
+        private ICollectionView ContactsView { get; }
+
+        private ContactInfoMode _mode;
+
+        private string _searchText;
 
         public Contact SelectedContact
         {
@@ -38,6 +40,25 @@ namespace ContactsApp.ViewModels
             get => _contacts;
             set { _contacts = value; OnPropertyChanged(nameof(Contacts)); }
         }
+
+        public ContactInfoMode Mode
+        {
+            get => _mode;
+            set { _mode = value; OnPropertyChanged(nameof(Mode)); OnPropertyChanged(nameof(ShowContactInfo)); OnPropertyChanged(nameof(ShowDeleteButton)); }
+        }
+
+        public string SearchText
+        {
+            get => _searchText;
+            set {
+                if (value == _searchText)
+                    return;
+                _searchText = value;
+                ContactsView.Refresh();
+                OnPropertyChanged(nameof(SearchText));
+            }
+        }
+
         public ICommand AddNewContactCommand => new DelegateCommand(AddNewContact, CanAddNewContact);
 
         public ICommand SaveContactCommand => new DelegateCommand(SaveContact, CanSaveContact);
