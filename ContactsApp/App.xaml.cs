@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
+using ContactsApp.Models;
+using ContactsApp.Utilities;
+using ContactsApp.ViewModels;
+using ContactsApp.Views;
 
 namespace ContactsApp
 {
@@ -13,5 +12,16 @@ namespace ContactsApp
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var contactMainViewModel = new ContactMainViewModel
+            {
+                Contacts = new ObservableCollection<Contact>(ContactUtility.GenerateContacts())
+            };
+            var contactMain = new ContactMain {DataContext = contactMainViewModel};
+            contactMain.Show();
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace ContactsApp.ViewModels
 {
-    class ContactMainViewModel : ViewModelBase
+    public class ContactMainViewModel : ViewModelBase
     {
         public ContactMainViewModel()
         {
@@ -16,7 +16,6 @@ namespace ContactsApp.ViewModels
             ContactsView = CollectionViewSource.GetDefaultView(Contacts);
             ContactsView.Filter = contact => string.IsNullOrEmpty(SearchText) || ((Contact)contact).FullName.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase);
             Mode = ContactInfoMode.None;
-            GenerateData();
         }
 
         private Contact _selectedContact;
@@ -86,7 +85,6 @@ namespace ContactsApp.ViewModels
         {
             Mode = ContactInfoMode.Add;
             SelectedContact = new Contact();
-            _addNewContactCommand.InvokeCanExecuteChanged();
         }
 
         private bool CanAddNewContact(object commandParameter)
@@ -100,7 +98,7 @@ namespace ContactsApp.ViewModels
             {
                 Contacts.Add(SelectedContact);
             }
-            else
+            else if (Mode == ContactInfoMode.Edit)
             {
                 var contactIndex = Contacts.IndexOf(SelectedContact);
                 Contacts[contactIndex].FirstName = SelectedContact.FirstName;
@@ -116,7 +114,7 @@ namespace ContactsApp.ViewModels
 
         private void CancelContact(object commandParameter)
         {
-            SetContactInfoModeToNone();
+            Mode = ContactInfoMode.None;
         }
         private bool CanCancelContact(object commandParameter)
         {
@@ -129,8 +127,6 @@ namespace ContactsApp.ViewModels
             { 
                 Mode = ContactInfoMode.Edit;
                 SelectedContact = (Contact)commandParameter;
-                _addNewContactCommand.InvokeCanExecuteChanged();
-                _deleteContactCommand.InvokeCanExecuteChanged();
             }
         }
 
@@ -144,47 +140,20 @@ namespace ContactsApp.ViewModels
             if (SelectedContact != null)
             {
                 Contacts.Remove(SelectedContact);
-                SetContactInfoModeToNone();
             }
+
+            Mode = ContactInfoMode.None;
         }
         private bool CanDeleteContact(object commandParameter)
         {
             return Mode == ContactInfoMode.Edit;
         }
         #endregion
-
-        private void SetContactInfoModeToNone()
-        {
-            Mode = ContactInfoMode.None;
-            _addNewContactCommand.InvokeCanExecuteChanged();
-        }
-
-        // TODO: For testing purpose. To remove later.
-        private void GenerateData()
-        {
-            for (var i = 0; i < 100; i++)
-            {
-                var contact = new Contact
-                {
-                    FirstName = "Person",
-                    LastName = "Test" + i,
-                    AddressLine1 = "Address Line 1",
-                    AddressLine2 = "Address Line 2",
-                    Country = "Singapore",
-                    Email = "test@mail.com",
-                    Mobile = "91234554" + i,
-                    PostalCode = "123456"
-                };
-
-                Contacts.Add(contact);
-            }
-        }
-
-        public enum ContactInfoMode
-        {
-            Add,
-            Edit,
-            None
-        }
+    }
+    public enum ContactInfoMode
+    {
+        Add,
+        Edit,
+        None
     }
 }

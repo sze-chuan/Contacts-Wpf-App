@@ -18,8 +18,10 @@ namespace ContactsApp.Commands
 
         public bool CanExecute(object parameter) => _canExecuteAction?.Invoke(parameter) ?? true;
 
-        public event EventHandler CanExecuteChanged;
-
-        public void InvokeCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        public event EventHandler CanExecuteChanged
+        {
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
+        }
     }
 }

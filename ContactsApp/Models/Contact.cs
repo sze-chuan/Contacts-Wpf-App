@@ -1,22 +1,14 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace ContactsApp.Models
 {
     public class Contact : INotifyPropertyChanged
     {
-        public Contact()
-        {
-            Id = Guid.NewGuid();
-        }
-
         private string _firstName;
 
         private string _lastName;
 
         private string _email;
-
-        public Guid Id { get; set; }
 
         public string FirstName
         {
