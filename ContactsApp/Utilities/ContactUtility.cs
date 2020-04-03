@@ -13,7 +13,7 @@ namespace ContactsApp.Utilities
         {
             var contacts = new List<Contact>();
 
-            for (var i = 0; i < 100; i++)
+            for (var i = 0; i < 30; i++)
             {
                 var contact = new Contact
                 {

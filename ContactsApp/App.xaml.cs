@@ -16,10 +16,7 @@ namespace ContactsApp
         {
             base.OnStartup(e);
 
-            var contactMainViewModel = new ContactMainViewModel
-            {
-                Contacts = new ObservableCollection<Contact>(ContactUtility.GenerateContacts())
-            };
+            var contactMainViewModel = new ContactMainViewModel(ContactUtility.GenerateContacts());
             var contactMain = new ContactMain {DataContext = contactMainViewModel};
             contactMain.Show();
         }

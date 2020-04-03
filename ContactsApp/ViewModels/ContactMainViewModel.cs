@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
@@ -10,9 +11,9 @@ namespace ContactsApp.ViewModels
 {
     public class ContactMainViewModel : ViewModelBase
     {
-        public ContactMainViewModel()
+        public ContactMainViewModel(IList<Contact> preGeneratedContacts = null)
         {
-            Contacts = new ObservableCollection<Contact>();
+            Contacts = preGeneratedContacts != null ? new ObservableCollection<Contact>(preGeneratedContacts) : new ObservableCollection<Contact>();
             ContactsView = CollectionViewSource.GetDefaultView(Contacts);
             ContactsView.Filter = contact => string.IsNullOrEmpty(SearchText) || ((Contact)contact).FullName.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase);
             Mode = ContactInfoMode.None;
