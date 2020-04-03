@@ -14,18 +14,17 @@ namespace ContactsApp.ViewModels
         public ContactMainViewModel(IList<Contact> preGeneratedContacts = null)
         {
             Contacts = preGeneratedContacts != null ? new ObservableCollection<Contact>(preGeneratedContacts) : new ObservableCollection<Contact>();
-            ContactsView = CollectionViewSource.GetDefaultView(Contacts);
-            ContactsView.Filter = contact => string.IsNullOrEmpty(SearchText) || ((Contact)contact).FullName.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase);
-            Mode = ContactInfoMode.None;
+            SetupContactsView();
+            Mode = ApplicationMode.None;
         }
 
         private Contact _selectedContact;
 
         private ObservableCollection<Contact> _contacts;
 
-        private ICollectionView ContactsView { get; }
+        private ICollectionView ContactsView { get; set; }
 
-        private ContactInfoMode _mode;
+        private ApplicationMode _mode;
 
         private string _searchText;
 
@@ -47,7 +46,7 @@ namespace ContactsApp.ViewModels
             set { _contacts = value; OnPropertyChanged(nameof(Contacts)); }
         }
 
-        public ContactInfoMode Mode
+        public ApplicationMode Mode
         {
             get => _mode;
             set { _mode = value; OnPropertyChanged(nameof(Mode)); OnPropertyChanged(nameof(ShowContactInfo)); OnPropertyChanged(nameof(ShowDeleteButton)); OnPropertyChanged(nameof(ContactHeaderText)); }
@@ -75,37 +74,37 @@ namespace ContactsApp.ViewModels
 
         public ICommand DeleteCommand => _deleteContactCommand ??= new DelegateCommand(DeleteContact, CanDeleteContact);
 
-        public bool ShowContactInfo => Mode == ContactInfoMode.Add || Mode == ContactInfoMode.Edit;
+        public bool ShowContactInfo => Mode == ApplicationMode.Add || Mode == ApplicationMode.Edit;
 
-        public bool ShowDeleteButton => Mode == ContactInfoMode.Edit;
+        public bool ShowDeleteButton => Mode == ApplicationMode.Edit;
 
-        public string ContactHeaderText => Mode == ContactInfoMode.Add ? "Add New Contact" : "Edit Contact";
+        public string ContactHeaderText => Mode == ApplicationMode.Add ? "Add New Contact" : "Edit Contact";
 
         #region Command related
         private void AddNewContact(object commandParameter)
         {
-            Mode = ContactInfoMode.Add;
+            Mode = ApplicationMode.Add;
             SelectedContact = new Contact();
         }
 
         private bool CanAddNewContact(object commandParameter)
         {
-            return Mode == ContactInfoMode.None;
+            return Mode == ApplicationMode.None;
         }
 
         private void SaveContact(object commandParameter)
         {
-            if (Mode == ContactInfoMode.Add)
+            if (Mode == ApplicationMode.Add)
             {
                 Contacts.Add(SelectedContact);
             }
-            else if (Mode == ContactInfoMode.Edit)
+            else if (Mode == ApplicationMode.Edit)
             {
                 var contactIndex = Contacts.IndexOf(SelectedContact);
                 Contacts[contactIndex].FirstName = SelectedContact.FirstName;
             }
 
-            Mode = ContactInfoMode.None;
+            Mode = ApplicationMode.None;
         }
 
         private bool CanSaveContact(object commandParameter)
@@ -115,7 +114,7 @@ namespace ContactsApp.ViewModels
 
         private void CancelContact(object commandParameter)
         {
-            Mode = ContactInfoMode.None;
+            Mode = ApplicationMode.None;
         }
         private bool CanCancelContact(object commandParameter)
         {
@@ -126,7 +125,7 @@ namespace ContactsApp.ViewModels
         {
             if (commandParameter != null)
             { 
-                Mode = ContactInfoMode.Edit;
+                Mode = ApplicationMode.Edit;
                 SelectedContact = (Contact)commandParameter;
             }
         }
@@ -143,15 +142,22 @@ namespace ContactsApp.ViewModels
                 Contacts.Remove(SelectedContact);
             }
 
-            Mode = ContactInfoMode.None;
+            Mode = ApplicationMode.None;
         }
         private bool CanDeleteContact(object commandParameter)
         {
-            return Mode == ContactInfoMode.Edit;
+            return Mode == ApplicationMode.Edit;
         }
         #endregion
+
+        private void SetupContactsView()
+        {
+            ContactsView = CollectionViewSource.GetDefaultView(Contacts);
+            ContactsView.Filter = contact => string.IsNullOrEmpty(SearchText) || ((Contact)contact).FullName.Contains(SearchText, StringComparison.InvariantCultureIgnoreCase);
+            ContactsView.SortDescriptions.Add(new SortDescription("FullName", ListSortDirection.Ascending));
+        }
     }
-    public enum ContactInfoMode
+    public enum ApplicationMode
     {
         Add,
         Edit,

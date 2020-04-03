@@ -17,42 +17,42 @@ namespace UnitTests
             ViewModel = new ContactMainViewModel();
         }
 
-        [TestCase(ContactInfoMode.Add, true)]
-        [TestCase(ContactInfoMode.Edit, true)]
-        [TestCase(ContactInfoMode.None, false)]
-        public void ShowContactInfoTests(ContactInfoMode mode, bool expected)
+        [TestCase(ApplicationMode.Add, true)]
+        [TestCase(ApplicationMode.Edit, true)]
+        [TestCase(ApplicationMode.None, false)]
+        public void ShowContactInfoTests(ApplicationMode mode, bool expected)
         {
             ViewModel.Mode = mode;
 
             Assert.AreEqual(expected, ViewModel.ShowContactInfo);
         }
 
-        [TestCase(ContactInfoMode.Add, false)]
-        [TestCase(ContactInfoMode.Edit, true)]
-        [TestCase(ContactInfoMode.None, false)]
-        public void ShowDeleteButtonTests(ContactInfoMode mode, bool expected)
+        [TestCase(ApplicationMode.Add, false)]
+        [TestCase(ApplicationMode.Edit, true)]
+        [TestCase(ApplicationMode.None, false)]
+        public void ShowDeleteButtonTests(ApplicationMode mode, bool expected)
         {
             ViewModel.Mode = mode;
 
             Assert.AreEqual(expected, ViewModel.ShowDeleteButton);
         }
 
-        [TestCase(ContactInfoMode.Add)]
-        [TestCase(ContactInfoMode.Edit)]
-        [TestCase(ContactInfoMode.None)]
-        public void ContactHeaderTextTests(ContactInfoMode mode)
+        [TestCase(ApplicationMode.Add)]
+        [TestCase(ApplicationMode.Edit)]
+        [TestCase(ApplicationMode.None)]
+        public void ContactHeaderTextTests(ApplicationMode mode)
         {
-            var expected = mode == ContactInfoMode.Add ? "Add New Contact" : "Edit Contact";
+            var expected = mode == ApplicationMode.Add ? "Add New Contact" : "Edit Contact";
 
             ViewModel.Mode = mode;
 
             Assert.AreEqual(expected, ViewModel.ContactHeaderText);
         }
 
-        [TestCase(ContactInfoMode.Add, false)]
-        [TestCase(ContactInfoMode.Edit, false)]
-        [TestCase(ContactInfoMode.None, true)]
-        public void CanAddNewCommandTests(ContactInfoMode mode, bool expected)
+        [TestCase(ApplicationMode.Add, false)]
+        [TestCase(ApplicationMode.Edit, false)]
+        [TestCase(ApplicationMode.None, true)]
+        public void CanAddNewCommandTests(ApplicationMode mode, bool expected)
         {
             ViewModel.Mode = mode; 
             
@@ -64,18 +64,18 @@ namespace UnitTests
         {
             ViewModel.AddNewContactCommand.Execute(null);
 
-            Assert.AreEqual(ContactInfoMode.Add, ViewModel.Mode);
+            Assert.AreEqual(ApplicationMode.Add, ViewModel.Mode);
             Assert.IsNotNull(ViewModel.SelectedContact);
         }
 
         [Test]
         public void SaveContactWhenContactIsNewTest()
         {
-            ViewModel.Mode = ContactInfoMode.Add;
+            ViewModel.Mode = ApplicationMode.Add;
             ViewModel.SelectedContact = new Contact {FirstName = "test"};
             ViewModel.SaveContactCommand.Execute(null);
 
-            Assert.AreEqual(ContactInfoMode.None, ViewModel.Mode);
+            Assert.AreEqual(ApplicationMode.None, ViewModel.Mode);
             Assert.IsTrue(ViewModel.Contacts.Any(x => x.FirstName == "test"));
         }
 
@@ -84,12 +84,12 @@ namespace UnitTests
         {
             var contact = new Contact {FirstName = "test"};
             ViewModel.Contacts = new ObservableCollection<Contact>{ contact };
-            ViewModel.Mode = ContactInfoMode.Edit;
+            ViewModel.Mode = ApplicationMode.Edit;
             ViewModel.SelectedContact = contact;
             ViewModel.SelectedContact.LastName = "test1";
             ViewModel.SaveContactCommand.Execute(null);
 
-            Assert.AreEqual(ContactInfoMode.None, ViewModel.Mode);
+            Assert.AreEqual(ApplicationMode.None, ViewModel.Mode);
             Assert.AreEqual(1, ViewModel.Contacts.Count);
             Assert.IsTrue(ViewModel.Contacts.Any(x => x.LastName == "test1"));
         }
@@ -97,11 +97,11 @@ namespace UnitTests
         [Test]
         public void DoNotSaveContactWhenModeIsNoneTest()
         {
-            ViewModel.Mode = ContactInfoMode.None;
+            ViewModel.Mode = ApplicationMode.None;
             ViewModel.SelectedContact = new Contact { FirstName = "test" };
             ViewModel.SaveContactCommand.Execute(null);
 
-            Assert.AreEqual(ContactInfoMode.None, ViewModel.Mode);
+            Assert.AreEqual(ApplicationMode.None, ViewModel.Mode);
             Assert.AreEqual(0, ViewModel.Contacts.Count);
         }
 
@@ -111,7 +111,7 @@ namespace UnitTests
             var contact = new Contact {FirstName = "test"};
             ViewModel.EditContactCommand.Execute(contact);
 
-            Assert.AreEqual(ContactInfoMode.Edit, ViewModel.Mode);
+            Assert.AreEqual(ApplicationMode.Edit, ViewModel.Mode);
             Assert.AreEqual(contact, ViewModel.SelectedContact);
         }
 
@@ -120,7 +120,7 @@ namespace UnitTests
         {
             ViewModel.EditContactCommand.Execute(null);
 
-            Assert.AreEqual(ContactInfoMode.None, ViewModel.Mode);
+            Assert.AreEqual(ApplicationMode.None, ViewModel.Mode);
             Assert.IsNull(ViewModel.SelectedContact);
         }
 
@@ -129,12 +129,12 @@ namespace UnitTests
         {
             var contact = new Contact { FirstName = "test" };
             ViewModel.Contacts = new ObservableCollection<Contact> { contact };
-            ViewModel.Mode = ContactInfoMode.Edit;
+            ViewModel.Mode = ApplicationMode.Edit;
             ViewModel.SelectedContact = contact;
 
             ViewModel.DeleteCommand.Execute(contact);
 
-            Assert.AreEqual(ContactInfoMode.None, ViewModel.Mode);
+            Assert.AreEqual(ApplicationMode.None, ViewModel.Mode);
             Assert.AreEqual(0, ViewModel.Contacts.Count);
         }
 
@@ -143,18 +143,18 @@ namespace UnitTests
         {
             var contact = new Contact { FirstName = "test" };
             ViewModel.Contacts = new ObservableCollection<Contact> { contact };
-            ViewModel.Mode = ContactInfoMode.Edit;
+            ViewModel.Mode = ApplicationMode.Edit;
 
             ViewModel.DeleteCommand.Execute(contact);
 
-            Assert.AreEqual(ContactInfoMode.None, ViewModel.Mode);
+            Assert.AreEqual(ApplicationMode.None, ViewModel.Mode);
             Assert.AreEqual(1, ViewModel.Contacts.Count);
         }
 
-        [TestCase(ContactInfoMode.Add, false)]
-        [TestCase(ContactInfoMode.Edit, true)]
-        [TestCase(ContactInfoMode.None, false)]
-        public void CanDeleteContactTests(ContactInfoMode mode, bool expected)
+        [TestCase(ApplicationMode.Add, false)]
+        [TestCase(ApplicationMode.Edit, true)]
+        [TestCase(ApplicationMode.None, false)]
+        public void CanDeleteContactTests(ApplicationMode mode, bool expected)
         {
             ViewModel.Mode = mode;
 
