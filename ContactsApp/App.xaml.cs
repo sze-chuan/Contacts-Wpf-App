@@ -16,6 +16,7 @@ namespace ContactsApp
         {
             base.OnStartup(e);
 
+            //  Pre-populate with some random generated data
             var contactMainViewModel = new ContactMainViewModel(ContactUtility.GenerateContacts());
             var contactMain = new ContactMain {DataContext = contactMainViewModel};
             contactMain.Show();

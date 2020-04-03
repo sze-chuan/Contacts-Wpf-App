@@ -64,6 +64,13 @@ namespace ContactsApp.ViewModels
             }
         }
 
+        public bool ShowContactInfo => Mode == ApplicationMode.Add || Mode == ApplicationMode.Edit;
+
+        public bool ShowDeleteButton => Mode == ApplicationMode.Edit;
+
+        public string ContactHeaderText => Mode == ApplicationMode.Add ? "Add New Contact" : "Edit Contact";
+
+        #region Command related
         public ICommand AddNewContactCommand => _addNewContactCommand ??= new DelegateCommand(AddNewContact, CanAddNewContact);
 
         public ICommand SaveContactCommand => _saveContactCommand ??= new DelegateCommand(SaveContact, CanSaveContact);
@@ -73,14 +80,7 @@ namespace ContactsApp.ViewModels
         public ICommand CancelCommand => _cancelCommand ??= new DelegateCommand(CancelContact, CanCancelContact);
 
         public ICommand DeleteCommand => _deleteContactCommand ??= new DelegateCommand(DeleteContact, CanDeleteContact);
-
-        public bool ShowContactInfo => Mode == ApplicationMode.Add || Mode == ApplicationMode.Edit;
-
-        public bool ShowDeleteButton => Mode == ApplicationMode.Edit;
-
-        public string ContactHeaderText => Mode == ApplicationMode.Add ? "Add New Contact" : "Edit Contact";
-
-        #region Command related
+        
         private void AddNewContact(object commandParameter)
         {
             Mode = ApplicationMode.Add;
